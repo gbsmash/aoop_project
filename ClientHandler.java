@@ -12,9 +12,8 @@ public class ClientHandler implements Runnable{
     private int nbClient;
 
 
-    public ClientHandler(ServerSocket serverSocket, Socket socket) throws IOException {
+    public ClientHandler(ServerSocket serverSocket) throws IOException {
         this.serverSocket = serverSocket;
-        this.socket = socket;
         this.out = new ObjectOutputStream(socket.getOutputStream());
         this.in = new ObjectInputStream(socket.getInputStream());
     }

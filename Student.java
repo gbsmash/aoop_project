@@ -8,6 +8,8 @@ public class Student {
     private List<Destination> preferences;
     private Destination assignedDest;
 
+    public Student() {}
+
     public Student(String name, String surname) {
         this.name = name;
         this.surname = surname;

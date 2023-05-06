@@ -66,4 +66,15 @@ public class Client {
             System.out.println("Disconnected from server");
         }
     }
+
+
+    public static void main(String[] args) throws IOException {
+        Student student = new Student();
+        Scanner sc = new Scanner(System.in);
+        System.out.println("Enter your name: ");
+        student.setName(sc.nextLine());
+        System.out.println("Enter your surname: ");
+        student.setSurname(sc.nextLine());
+        Client client = new Client("localhost", 1234, student);
+    }
 }
