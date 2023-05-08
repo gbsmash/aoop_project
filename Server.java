@@ -27,13 +27,13 @@ public class Server {
             isRunning = true;
             System.out.println("Server started on port " + port);
 
+
             while (isRunning) {
                 Socket socket = serverSocket.accept();
                 System.out.println("Client connected " + socket.getInetAddress());
                 ClientHandler1 clientHandler = new ClientHandler1(serverSocket);
                 clients.add(clientHandler);
                 new Thread(clientHandler).start();
-
             }
 
         } catch (IOException e) {
@@ -152,5 +152,6 @@ public class Server {
     public static void main(String[] args) {
         Server server = new Server(1234);
         server.start();
+
     }
 }

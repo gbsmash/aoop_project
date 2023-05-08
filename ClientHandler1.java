@@ -4,14 +4,14 @@ import java.net.Socket;
 
 public class ClientHandler1 implements Runnable {
     private final ServerSocket serverSocket;
-    private final Socket socket;
+//    private final Socket socket;
     private ObjectInputStream in;
     private ObjectOutputStream out;
     private int nbStudent;
 
     public ClientHandler1(ServerSocket serverSocket) throws IOException {
         this.serverSocket = serverSocket;
-        this.socket = serverSocket.accept();
+//        this.socket = serverSocket.accept();
         this.nbStudent = 0;
     }
 
