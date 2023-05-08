@@ -52,13 +52,11 @@ public class MainFrame extends JFrame {
                 String name = t1.getText();
                 String surname = t2.getText();
 
-                // Check if all fields are filled
                 if (name.isEmpty() || surname.isEmpty()) {
                     JOptionPane.showMessageDialog(MainFrame.this, "Please fill in all the fields.");
                 } else {
                     student.setName(name);
                     student.setSurname(surname);
-                    // Create a DestinationFrame and pass the student object
                     DestinationFrame destinationFrame = new DestinationFrame(student);
                     destinationFrame.setVisible(true);
                     dispose();

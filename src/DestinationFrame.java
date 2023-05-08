@@ -35,7 +35,6 @@ public class DestinationFrame extends JFrame {
 
         List<Destination> destinations = Destination.getDefaultDestinations();
 
-        // Display destinations
         String destinationsText = "";
         for (int i = 0; i < destinations.size(); i++) {
             destinationsText += destinations.get(i).getIndex() + ". " + destinations.get(i).getName() + "\n";
@@ -46,7 +45,6 @@ public class DestinationFrame extends JFrame {
         destinationsTextArea.setBounds(70, 250, 400, 200);
         this.add(destinationsTextArea);
 
-        // JTextArea for client preferences input
         preferencesTextArea = new JTextArea();
         preferencesTextArea.setBounds(150, 470, 200, 25);
         this.add(preferencesTextArea);
@@ -55,13 +53,11 @@ public class DestinationFrame extends JFrame {
         inputLabel.setBounds(70, 470, 300, 25);
         this.add(inputLabel);
 
-        // Error label
         inputErrorLabel = new JLabel();
         inputErrorLabel.setForeground(Color.RED);
         inputErrorLabel.setBounds(200, 500, 300, 25);
         this.add(inputErrorLabel);
 
-        // Create a "Submit" button
         submitBtn = new JButton("Submit");
         submitBtn.setBounds(260, 550, 80, 30);
         this.add(submitBtn);
@@ -102,17 +98,6 @@ public class DestinationFrame extends JFrame {
                 }
             }
         });
-//        t1 = new JTextArea();
-//        t1.setEditable(false);
-//        t1.setFont(new Font("Arial", Font.PLAIN, 18));
-//        for (int i = 0; i < destinations.size(); i++) {
-//            t1.append((i + 1) + ". " + destinations.get(i).getName() + "\n");
-//        }
-//        scrollPane = new JScrollPane(t1);
-//        scrollPane.setBounds(70, 250, 600, 300);
-//        this.add(scrollPane);
-
-        // Add submit button or other UI components as needed
 
         this.setVisible(true);
     }

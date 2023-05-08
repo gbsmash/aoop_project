@@ -18,8 +18,6 @@ public class GeneticAlgorithm {
         this.mutationRate = mutationRate;
         this.random = new Random();
     }
-
-    // Helper method to calculate the cost of an assignment
     private int calculateCost(Assignment assignment) {
         Student student = assignment.getStudent();
         Destination destination = assignment.getDestination();
@@ -32,7 +30,6 @@ public class GeneticAlgorithm {
         }
     }
 
-    // Initialize the population with random solutions
     public List<List<Assignment>> initializePopulation() {
         List<List<Assignment>> population = new ArrayList<>();
         for (int i = 0; i < populationSize; i++) {
@@ -72,7 +69,6 @@ public class GeneticAlgorithm {
         assignment.setCost(calculateCost(assignment));
     }
 
-    // Run the genetic algorithm
     public List<Assignment> run() {
         List<List<Assignment>> population = initializePopulation();
         int generation = 0;
@@ -103,7 +99,6 @@ public class GeneticAlgorithm {
         return fitness;
     }
 
-    // Select parents for reproduction based on their fitness (Roulette Wheel Selection)
     public List<List<Assignment>> selection(List<List<Assignment>> population, List<Double> fitness) {
         List<List<Assignment>> parents = new ArrayList<>();
         double totalFitness = fitness.stream().mapToDouble(Double::doubleValue).sum();
@@ -124,7 +119,6 @@ public class GeneticAlgorithm {
         return parents;
     }
 
-    // Perform crossover between pairs of parents to generate offspring (One-point Crossover)
     public List<List<Assignment>> crossover(List<List<Assignment>> parents) {
         List<List<Assignment>> offspring = new ArrayList<>();
         for (int i = 0; i < parents.size(); i += 2) {
@@ -143,7 +137,6 @@ public class GeneticAlgorithm {
         return offspring;
     }
 
-    // Apply mutation to the offspring (Swap Mutation)
     public List<List<Assignment>> mutation(List<List<Assignment>> offspring) {
         for (List<Assignment> assignments : offspring) {
             if (random.nextDouble() < mutationRate) {
@@ -155,7 +148,6 @@ public class GeneticAlgorithm {
         return offspring;
     }
 
-    // Replace some solutions in the population with the offspring (Generational Replacement)
     public List<List<Assignment>> replacement(List<List<Assignment>> population, List<List<Assignment>> offspring, List<Double> fitness) {
         Collections.sort(offspring, Comparator.comparingDouble(this::calculateSolutionFitness).reversed());
         for (int i = 0; i < offspring.size(); i++) {
@@ -174,7 +166,6 @@ public class GeneticAlgorithm {
         return 1.0 / totalCost;
     }
 
-    // Find the index of the best solution in the population
     public int getBestSolutionIndex(List<Double> fitness) {
         int bestIndex = 0;
         for (int i = 1; i < fitness.size(); i++) {
@@ -185,7 +176,6 @@ public class GeneticAlgorithm {
         return bestIndex;
     }
 
-    // Find the index of the worst solution in the population
     public int getWorstSolutionIndex(List<Double> fitness) {
         int worstIndex = 0;
         for (int i = 1; i < fitness.size(); i++) {

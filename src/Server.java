@@ -64,17 +64,14 @@ public class Server {
             out.writeObject(destinations);
             out.flush();
 
-            // Add the student to the list of students
             students.add(student);
 
-            // Initialize the GeneticAlgorithm instance with the updated list of students
             int populationSize = 50;
             int maxGenerations = 100;
             double crossoverRate = 0.8;
             double mutationRate = 0.1;
             this.geneticAlgorithm = new GeneticAlgorithm(students, destinations, populationSize, maxGenerations, crossoverRate, mutationRate);
 
-            // Run the genetic algorithm
             List<Assignment> optimalAssignments = geneticAlgorithm.run();
             assignments = optimalAssignments;
 
