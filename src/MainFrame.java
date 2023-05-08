@@ -9,6 +9,8 @@ import java.io.PrintWriter;
 import java.net.ServerSocket;
 import java.net.Socket;
 import java.text.NumberFormat;
+import java.util.List;
+import java.util.concurrent.ExecutionException;
 
 public class MainFrame extends JFrame {
     JLabel name, surname;
@@ -46,31 +48,24 @@ public class MainFrame extends JFrame {
             public void actionPerformed(ActionEvent e) {
                 submitBtn.setEnabled(false);
                 Student student = new Student();
-//                 Get the values from the JTextFields
+                // Get the values from the JTextFields
                 String name = t1.getText();
-
                 String surname = t2.getText();
 
                 // Check if all fields are filled
                 if (name.isEmpty() || surname.isEmpty()) {
                     JOptionPane.showMessageDialog(MainFrame.this, "Please fill in all the fields.");
                 } else {
-                    // Send the values to the server using a network connection
-                    // Create a network connection to the server
                     student.setName(name);
                     student.setSurname(surname);
-                    try {
-                        Client client = new Client("localhost", 1234, student);
-                        dispose();
-                        DestinationFrame destinationFrame = new DestinationFrame();
-                        destinationFrame.setVisible(true);
-                    } catch (IOException ex) {
-                        throw new RuntimeException(ex);
-                    }
-
-
+                    // Create a DestinationFrame and pass the student object
+                    DestinationFrame destinationFrame = new DestinationFrame(student);
+                    destinationFrame.setVisible(true);
+                    dispose();
                 }
             }
+
+
         });
 
 

@@ -1,11 +1,14 @@
+import java.util.ArrayList;
 import java.util.List;
 
 public class Destination {
+    private int index;
     private String name;
     private int maxStudents;
     private List<Student> assignedStudents;
 
-    public Destination(String name, int maxStudents) {
+    public Destination(int index, String name, int maxStudents) {
+        this.index = index;
         this.name = name;
         this.maxStudents = maxStudents;
     }
@@ -28,6 +31,30 @@ public class Destination {
         return false;
     }
 
+    public void setIndex(int index) {
+        this.index = index;
+    }
+
+    public int getIndex() {
+        return index;
+    }
+
+    public static List<Destination> getDefaultDestinations() {
+        List<Destination> destinations = new ArrayList<>();
+
+        destinations.add(new Destination(1,"University of Melbourne", 4));
+        destinations.add(new Destination(2,"Heidelberg University", 4));
+        destinations.add(new Destination(3,"Michigan State University", 4));
+        destinations.add(new Destination(4,"Brandeis University", 4));
+        destinations.add(new Destination(5,"Lund University", 4));
+        destinations.add(new Destination(6,"Texas Tech University", 4));
+        destinations.add(new Destination(7,"Stanford University", 4));
+        destinations.add(new Destination(8,"Louisiana State University", 4));
+        destinations.add(new Destination(9,"The University of Manchester", 4));
+        destinations.add(new Destination(10,"Columbia University", 4));
+
+        return destinations;
+    }
     boolean isFull(){
         return assignedStudents.size() == maxStudents;
     }

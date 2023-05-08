@@ -1,6 +1,7 @@
 
 import java.io.*;
 import java.net.Socket;
+import java.util.List;
 import java.util.Scanner;
 
 public class Client {
@@ -18,6 +19,11 @@ public class Client {
     }
 
 
+    public List<Destination> requestDestinations(Student student) throws IOException, ClassNotFoundException {
+        out.writeObject(student);
+        out.flush();
+        return getDestinations();
+    }
 
     void sendMessage(){             // EXAMPLE CODE
         try {
@@ -53,9 +59,15 @@ public class Client {
         }).start();
     }
 
+    public List<Destination> getDestinations() throws IOException, ClassNotFoundException {
+        // Read the destinations list from the server
+        return (List<Destination>) in.readObject();
+    }
     public void connect(String serverHost, int serverPort) throws IOException {
         socket = new Socket(serverHost, serverPort);
         isConnected=true;
+        out = new ObjectOutputStream(socket.getOutputStream());
+        in = new ObjectInputStream(socket.getInputStream());
         System.out.println("Connected to server at " + serverHost + ":" + serverPort);
     }
 

@@ -13,12 +13,16 @@ public class Server {
     private int port;
     private boolean isRunning;
     private List<Assignment> assignments;
+    private List<Student> students;
+
+    private GeneticAlgorithm geneticAlgorithm;
 
     public Server(int port) {
         this.port = port;
         clients = new ArrayList<>();
         destinations = new ArrayList<>();
         assignments = new ArrayList<>();
+        students = new ArrayList<>();
     }
 
     public void start() {
@@ -27,10 +31,13 @@ public class Server {
             isRunning = true;
             System.out.println("Server started on port " + port);
 
+            // No need to initialize the GeneticAlgorithm instance here
+            // It will be initialized within the handleStudent method
 
             while (isRunning) {
                 Socket socket = serverSocket.accept();
                 System.out.println("Client connected " + socket.getInetAddress());
+                handleStudent(socket);
                 ClientHandler1 clientHandler = new ClientHandler1(serverSocket);
                 clients.add(clientHandler);
                 new Thread(clientHandler).start();
@@ -53,8 +60,23 @@ public class Server {
 
             Student student = (Student) in.readObject();
             int maxCost = calculateCost();
+
             out.writeObject(destinations);
             out.flush();
+
+            // Add the student to the list of students
+            students.add(student);
+
+            // Initialize the GeneticAlgorithm instance with the updated list of students
+            int populationSize = 50;
+            int maxGenerations = 100;
+            double crossoverRate = 0.8;
+            double mutationRate = 0.1;
+            this.geneticAlgorithm = new GeneticAlgorithm(students, destinations, populationSize, maxGenerations, crossoverRate, mutationRate);
+
+            // Run the genetic algorithm
+            List<Assignment> optimalAssignments = geneticAlgorithm.run();
+            assignments = optimalAssignments;
 
             while (true) {
                 String preferenceName = (String) in.readObject();
@@ -75,7 +97,6 @@ public class Server {
                         assignments.add(assignment);
                         preference.addStudent(student);
                         student.setAssignedDest(preference);
-//                        broadcastMessage("assignment " + student.getName() + " " + student.getSurname() + " " + preference.getName());
                         break;
                     } else {
                         out.writeObject("rejected");
