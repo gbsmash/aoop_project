@@ -1,3 +1,4 @@
+package src;
 
 public class Assignment {
     private Student student;
