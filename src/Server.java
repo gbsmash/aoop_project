@@ -38,6 +38,7 @@ public class Server {
                 Socket socket = serverSocket.accept();
                 System.out.println("Client connected " + socket.getInetAddress());
                 handleStudent(socket);
+
                 ClientHandler1 clientHandler = new ClientHandler1(serverSocket);
                 clients.add(clientHandler);
                 new Thread(clientHandler).start();
@@ -60,6 +61,7 @@ public class Server {
 
             Student student = (Student) in.readObject();
             int maxCost = calculateCost();
+
 
             out.writeObject(destinations);
             out.flush();
@@ -103,6 +105,8 @@ public class Server {
                     out.writeObject("invalid");
                     out.flush();
                 }
+                out.writeObject(assignments);
+                out.flush();
             }
 
         } catch (IOException | ClassNotFoundException e) {

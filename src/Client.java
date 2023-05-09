@@ -1,4 +1,5 @@
 
+import javax.swing.*;
 import java.io.*;
 import java.net.Socket;
 import java.util.List;
@@ -24,6 +25,24 @@ public class Client {
         out.flush();
         return getDestinations();
     }
+    public List<Assignment> sendPreferencesAndGetResults(Student student) throws IOException, ClassNotFoundException {
+        out.writeObject(student);
+        out.flush();
+        return (List<Assignment>) in.readObject();
+    }
+
+    public void sendPreferencesAndWaitForResult(Student student) throws IOException, ClassNotFoundException {
+        out.writeObject(student);
+        out.flush();
+        WaitingFrame waitingFrame = new WaitingFrame(this);
+        waitingFrame.setVisible(true);
+    }
+
+    public void displayResults(List<Assignment> assignments) {
+        ResultsFrame resultsFrame = new ResultsFrame(assignments);
+        resultsFrame.setVisible(true);
+    }
+
 
     void sendMessage(){             // EXAMPLE CODE
         try {
@@ -81,7 +100,9 @@ public class Client {
 
 
     public static void main(String[] args) throws IOException {
-        MainFrame f = new MainFrame();
-        f.setVisible(true);
+        SwingUtilities.invokeLater(() -> {
+            MainFrame f = new MainFrame();
+            f.setVisible(true);
+        });
     }
 }

@@ -2,6 +2,7 @@ import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -11,13 +12,14 @@ public class DestinationFrame extends JFrame {
     JTextArea t1;
     JScrollPane scrollPane;
     JButton submitBtn;
+    private Client client;
 
     private JComboBox<String> destinationComboBox;
     private ButtonGroup destinationButtonGroup;
     private List<JComboBox<String>> preferenceComboBoxes;
     private JTextArea preferencesTextArea;
     private JLabel inputErrorLabel;
-    public DestinationFrame(Student student) {
+    public DestinationFrame(Client client, Student student) {
         this.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         this.setSize(800, 800);
         this.setLocationRelativeTo(null);
@@ -63,21 +65,19 @@ public class DestinationFrame extends JFrame {
         this.add(submitBtn);
 
         submitBtn.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                String input = preferencesTextArea.getText();
-                String[] preferencesInput = input.split("\\s+");
-
+            @Override    public void actionPerformed(ActionEvent e) {
+                String input = preferencesTextArea.getText();        String[] preferencesInput = input.split("[,\\s]+");
                 if (preferencesInput.length != 5) {
                     inputErrorLabel.setText("Please enter exactly 5 preferences.");
-                } else {
+                }
+                else {
+                    // check if input is correct(1-10) and unique
                     List<Destination> preferences = new ArrayList<>();
                     boolean validInput = true;
-
                     for (String preference : preferencesInput) {
                         try {
                             int index = Integer.parseInt(preference) - 1;
-                            if (index < 0 || index >= destinations.size()) {
+                            if (index < 0 || index >= destinations.size() || preferences.contains(destinations.get(index))) {
                                 validInput = false;
                                 break;
                             }
@@ -87,13 +87,20 @@ public class DestinationFrame extends JFrame {
                             break;
                         }
                     }
-
                     if (!validInput) {
-                        inputErrorLabel.setText("Enter valid numbers, 1-10");
+                        inputErrorLabel.setText("Enter unique numbers in range 1-10");
                     } else {
                         inputErrorLabel.setText("");
                         student.setPreferences(preferences);
-
+                        try {
+                            List<Assignment> assignments = client.sendPreferencesAndGetResults(student);
+                            ResultsFrame resultsFrame = new ResultsFrame(assignments);
+                            resultsFrame.setVisible(true);
+                            dispose();
+                        } catch (IOException | ClassNotFoundException ex) {
+                            ex.printStackTrace();
+                            inputErrorLabel.setText("Error sending preferences: " + ex.getMessage());
+                        }
                     }
                 }
             }

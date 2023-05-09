@@ -57,9 +57,14 @@ public class MainFrame extends JFrame {
                 } else {
                     student.setName(name);
                     student.setSurname(surname);
-                    DestinationFrame destinationFrame = new DestinationFrame(student);
-                    destinationFrame.setVisible(true);
-                    dispose();
+                    try {
+                        Client client = new Client("localhost", 1234, student);
+                        DestinationFrame destinationFrame = new DestinationFrame(client, student);
+                        dispose();
+                        destinationFrame.setVisible(true);
+                    } catch (IOException ex) {
+                        throw new RuntimeException(ex);
+                    }
                 }
             }
 
