@@ -13,42 +13,55 @@ import java.util.List;
 import java.util.concurrent.ExecutionException;
 
 public class MainFrame extends JFrame {
-    JLabel name, surname;
+    JLabel title, name, surname;
     JTextArea t1, t2;
-
     JButton submitBtn;
 
     public MainFrame(){
         this.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-        this.setSize(600,400);
+        this.setSize(700,570);
+        this.getContentPane().setBackground(Color.decode("#E6C0E9"));
         this.setLocationRelativeTo(null);
         this.setLayout(null);
-        name = new JLabel("Enter your name: ");
-        name.setBounds(70,70,300,100);
-        name.setFont(new Font("Arial", Font.BOLD, 20));
+
+        title = new JLabel("Enter your name and surname");
+        title.setBounds(170, 50, 500, 100);
+        title.setFont(new Font("Serif", Font.BOLD, 30));
+        this.add(title);
+
+        name = new JLabel("Name");
+        name.setBounds(270,130,300,100);
+        name.setFont(new Font("Serif", Font.BOLD, 17));
         this.add(name);
 
         t1 = new JTextArea();
-        t1.setBounds(350, 110, 100, 25);
+        t1.setBounds(270, 195, 170, 25);
+        t1.setBorder(BorderFactory.createLineBorder(Color.BLACK));
+        t1.setFont(new Font("Serif", Font.PLAIN, 18));
         this.add(t1);
 
-        surname = new JLabel("Enter your surname: ");
-        surname.setBounds(70,100,300,100);
-        surname.setFont(new Font("Arial", Font.BOLD, 20));
+        surname = new JLabel("Surname ");
+        surname.setBounds(270,210,300,100);
+        surname.setFont(new Font("Serif", Font.BOLD, 17));
         this.add(surname);
 
         t2 = new JTextArea();
-        t2.setBounds(350, 140, 100, 25);
+        t2.setBounds(270, 275, 170, 25);
+        t2.setBorder(BorderFactory.createLineBorder(Color.BLACK));
+        t2.setFont(new Font("Serif", Font.PLAIN, 18));
         this.add(t2);
 
         submitBtn = new JButton("Next");
-        submitBtn.setBounds(250, 180, 80, 30);
+        submitBtn.setBounds(305, 360, 100, 40);
+        submitBtn.setBackground(Color.decode("#8D89A6"));
+        submitBtn.setFont(new Font("Arial", Font.BOLD, 17));
+        submitBtn.setForeground(Color.white);
         this.add(submitBtn);
+
         submitBtn.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
-                submitBtn.setEnabled(false);
                 Student student = new Student();
-                // Get the values from the JTextFields
+
                 String name = t1.getText();
                 String surname = t2.getText();
 
@@ -57,19 +70,16 @@ public class MainFrame extends JFrame {
                 } else {
                     student.setName(name);
                     student.setSurname(surname);
-                    DestinationFrame destinationFrame = new DestinationFrame(student);
-                    destinationFrame.setVisible(true);
+                    try {
+                        Client client = new Client("localhost", 1234, student);
+                    } catch (IOException ex) {
+                        throw new RuntimeException(ex);
+                    }
                     dispose();
+                    DestinationFrame destinationFrame = new DestinationFrame(student);
                 }
             }
-
-
         });
-
-
-
-
+        this.setVisible(true);
     }
-
-
 }

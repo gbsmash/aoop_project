@@ -1,6 +1,5 @@
 import java.io.*;
 import java.net.ServerSocket;
-import java.net.Socket;
 
 public class ClientHandler1 implements Runnable {
     private final ServerSocket serverSocket;
