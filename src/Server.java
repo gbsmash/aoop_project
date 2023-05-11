@@ -3,7 +3,6 @@ package src;
 import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
-import java.net.InetAddress;
 import java.net.ServerSocket;
 import java.net.Socket;
 import java.util.ArrayList;
@@ -27,14 +26,20 @@ public class Server {
         assignments = new ArrayList<>();
         students = new ArrayList<>();
     }
+
     public void start() {
         try {
             serverSocket = new ServerSocket(port);
             isRunning = true;
             System.out.println("Server started on port " + port);
 
+            // No need to initialize the GeneticAlgorithm instance here
+            // It will be initialized within the handleStudent method
+
             while (isRunning) {
                 Socket socket = serverSocket.accept();
+                System.out.println("Client connected " + socket.getInetAddress());
+//                handleStudent(socket);
                 ClientHandler1 clientHandler = new ClientHandler1(this, socket);
                 clients.add(clientHandler);
                 new Thread(clientHandler).start();
@@ -50,13 +55,9 @@ public class Server {
 //        }
 //    }
 
-    public synchronized void printStudentConnected(Student student, InetAddress ipAddress) {
-        System.out.println(student.getName() + " connected " + ipAddress);
-    }
     public synchronized void handleStudent(Student student, ObjectOutputStream out) {
         try {
             students.add(student);
-            System.out.println(student.getName() + " connected " ); // Print the student's name along with the connected message
 
 //            optimizeStudentAllocation();
 
