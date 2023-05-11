@@ -3,6 +3,7 @@ package src;
 import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
+import java.net.InetAddress;
 import java.net.ServerSocket;
 import java.net.Socket;
 import java.util.ArrayList;
@@ -26,21 +27,15 @@ public class Server {
         assignments = new ArrayList<>();
         students = new ArrayList<>();
     }
-
     public void start() {
         try {
             serverSocket = new ServerSocket(port);
             isRunning = true;
             System.out.println("Server started on port " + port);
 
-            // No need to initialize the GeneticAlgorithm instance here
-            // It will be initialized within the handleStudent method
-
             while (isRunning) {
                 Socket socket = serverSocket.accept();
-                System.out.println("Client connected " + socket.getInetAddress());
-                handleStudent(socket);
-                ClientHandler1 clientHandler = new ClientHandler1(serverSocket);
+                ClientHandler1 clientHandler = new ClientHandler1(this, socket);
                 clients.add(clientHandler);
                 new Thread(clientHandler).start();
             }
@@ -55,60 +50,22 @@ public class Server {
 //        }
 //    }
 
-    public synchronized void handleStudent(Socket socket) {
+    public synchronized void printStudentConnected(Student student, InetAddress ipAddress) {
+        System.out.println(student.getName() + " connected " + ipAddress);
+    }
+    public synchronized void handleStudent(Student student, ObjectOutputStream out) {
         try {
-            ObjectInputStream in = new ObjectInputStream(socket.getInputStream());
-            ObjectOutputStream out = new ObjectOutputStream(socket.getOutputStream());
+            students.add(student);
+            System.out.println(student.getName() + " connected " ); // Print the student's name along with the connected message
 
-            Student student = (Student) in.readObject();
-            int maxCost = calculateCost();
+//            optimizeStudentAllocation();
 
-            out.writeObject(destinations);
+            // Send the assignments back to the client, dunno which ones, cause there is no algorithm, but still :)))
+            out.writeObject(getAssignments());
             out.flush();
 
-            students.add(student);
-
-            int populationSize = 50;
-            int maxGenerations = 100;
-            double crossoverRate = 0.8;
-            double mutationRate = 0.1;
-            this.geneticAlgorithm = new GeneticAlgorithm(students, destinations, populationSize, maxGenerations, crossoverRate, mutationRate);
-
-            List<Assignment> optimalAssignments = geneticAlgorithm.run();
-            assignments = optimalAssignments;
-
-            while (true) {
-                String preferenceName = (String) in.readObject();
-                Destination preference = null;
-
-                for (Destination dest : destinations) {
-                    if (dest.getName().equals(preferenceName)) {
-                        preference = dest;
-                        break;
-                    }
-                }
-
-                if (preference != null) {
-                    int preferenceCost = getAssignmentCost(student, preference);
-                    if (preferenceCost <= maxCost && !preference.isFull()) {
-                        Assignment assignment = new Assignment(student, preference);
-                        assignment.setCost(preferenceCost);
-                        assignments.add(assignment);
-                        preference.addStudent(student);
-                        student.setAssignedDest(preference);
-                        break;
-                    } else {
-                        out.writeObject("rejected");
-                        out.flush();
-                    }
-                } else {
-                    out.writeObject("invalid");
-                    out.flush();
-                }
-            }
-
-        } catch (IOException | ClassNotFoundException e) {
-            System.err.println("error handling studen " + e.getMessage());
+        } catch (IOException e) {
+            System.err.println("Error handling student " + e.getMessage());
         }
     }
 

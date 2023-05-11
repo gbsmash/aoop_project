@@ -15,8 +15,6 @@ public class Client {
     public Client(String serverHost, int serverPort, Student student) throws IOException {
         this.student=student;
         connect(serverHost, serverPort);
-//        this.out = new ObjectOutputStream(socket.getOutputStream());
-//        this.in = new ObjectInputStream(socket.getInputStream());
     }
 
 
@@ -64,11 +62,14 @@ public class Client {
         // Read the destinations list from the server
         return (List<Destination>) in.readObject();
     }
+
     public void connect(String serverHost, int serverPort) throws IOException {
         socket = new Socket(serverHost, serverPort);
-        isConnected=true;
+        isConnected = true;
         out = new ObjectOutputStream(socket.getOutputStream());
+        out.flush();
         in = new ObjectInputStream(socket.getInputStream());
+
         System.out.println("Connected to server at " + serverHost + ":" + serverPort);
     }
 

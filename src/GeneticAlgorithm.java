@@ -26,7 +26,7 @@ public class GeneticAlgorithm {
         int preferenceIndex = student.getPreferences().indexOf(destination);
 
         if (preferenceIndex >= 0) {
-            return (preferenceIndex + 1) * (preferenceIndex + 1);
+            return (preferenceIndex - 1) * (preferenceIndex - 1);
         } else {
             return 10 * 5 * 5;
         }
