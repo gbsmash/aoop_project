@@ -33,15 +33,10 @@ public class Server {
             isRunning = true;
             System.out.println("Server started on port " + port);
 
-            // No need to initialize the GeneticAlgorithm instance here
-            // It will be initialized within the handleStudent method
-
             while (isRunning) {
                 Socket socket = serverSocket.accept();
                 System.out.println("Client connected " + socket.getInetAddress());
-//                handleStudent(socket);
-                ClientHandler1 clientHandler = new ClientHandler1(this, socket);
-                clients.add(clientHandler);
+                ClientHandler1 clientHandler = new ClientHandler1(socket, clients);
                 new Thread(clientHandler).start();
             }
 
@@ -61,7 +56,7 @@ public class Server {
 
 //            optimizeStudentAllocation();
 
-            // Send the assignments back to the client, dunno which ones, cause there is no algorithm, but still :)))
+            // Send assignments back to client, dunno which ones, cause there is no algorithm, but still :)))
             out.writeObject(getAssignments());
             out.flush();
 
