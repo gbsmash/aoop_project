@@ -13,6 +13,7 @@ public class Destination {
         this.index = index;
         this.name = name;
         this.maxStudents = maxStudents;
+        this.assignedStudents = new ArrayList<>();
     }
 
     boolean removeStudent(Student student){

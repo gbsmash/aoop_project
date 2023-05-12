@@ -19,7 +19,10 @@ public class MainFrame extends JFrame {
     JTextArea t1, t2;
     JButton submitBtn;
 
-    public MainFrame(){
+    private Server server;
+
+    public MainFrame(Server server){
+        this.server= server;
         this.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         this.setSize(700,570);
         this.getContentPane().setBackground(Color.decode("#E6C0E9"));
@@ -78,7 +81,7 @@ public class MainFrame extends JFrame {
                         throw new RuntimeException(ex);
                     }
                     dispose();
-                    DestinationFrame destinationFrame = new DestinationFrame(student);
+                    DestinationFrame destinationFrame = new DestinationFrame(student, server);
                 }
             }
         });

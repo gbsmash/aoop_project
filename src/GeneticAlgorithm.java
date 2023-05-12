@@ -34,6 +34,9 @@ public class GeneticAlgorithm {
 
     public List<List<Assignment>> initializePopulation() {
         List<List<Assignment>> population = new ArrayList<>();
+        if (destinations.isEmpty()) {
+            throw new IllegalArgumentException("Destinations list must not be empty");
+        }
         for (int i = 0; i < populationSize; i++) {
             List<Assignment> assignments = new ArrayList<>();
             for (Student student : students) {
@@ -66,7 +69,9 @@ public class GeneticAlgorithm {
     private void mutate(List<Assignment> assignments) {
         int index = random.nextInt(assignments.size());
         Assignment assignment = assignments.get(index);
-        Destination newDestination = destinations.get(random.nextInt(destinations.size()));
+        Student student = assignment.getStudent();
+        List<Destination> preferredDestinations = student.getPreferences();
+        Destination newDestination = preferredDestinations.get(random.nextInt(preferredDestinations.size()));
         assignment.setDestination(newDestination);
         assignment.setCost(calculateCost(assignment));
     }
@@ -122,6 +127,11 @@ public class GeneticAlgorithm {
     }
 
     public List<List<Assignment>> crossover(List<List<Assignment>> parents) {
+        for (List<Assignment> parent : parents) {
+            if (parent.isEmpty()) {
+                throw new IllegalArgumentException("Parent lists must not be empty");
+            }
+        }
         List<List<Assignment>> offspring = new ArrayList<>();
         for (int i = 0; i < parents.size(); i += 2) {
             List<Assignment> parent1 = parents.get(i);

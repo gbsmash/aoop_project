@@ -18,6 +18,11 @@ public class Server {
     private List<Student> students;
 
     private GeneticAlgorithm geneticAlgorithm;
+    private List<Assignment> bestAssignment;
+    private int populationSize = 200;
+    private int maxGenerations = 1000;
+    private double crossoverRate = 0.8;
+    private double mutationRate = 0.02;
 
     public Server(int port) {
         this.port = port;
@@ -33,85 +38,55 @@ public class Server {
             isRunning = true;
             System.out.println("Server started on port " + port);
 
-            // No need to initialize the GeneticAlgorithm instance here
-            // It will be initialized within the handleStudent method
+            // Add code to populate your students list here.
+            // this.students = ...;
+
+            this.destinations = Destination.getDefaultDestinations();
+            initializeGeneticAlgorithm();
 
             while (isRunning) {
                 Socket socket = serverSocket.accept();
                 System.out.println("Client connected " + socket.getInetAddress());
-                handleStudent(socket);
-                ClientHandler1 clientHandler = new ClientHandler1(serverSocket);
+                ClientHandler1 clientHandler = new ClientHandler1(socket, this);
                 clients.add(clientHandler);
                 new Thread(clientHandler).start();
             }
-
         } catch (IOException e) {
             System.err.println("Error start " + e.getMessage());
         }
+        System.out.println("Best assignment found:");
+
     }
 
 //    public void broadcastMessage(String message) {
 //        for (ClientHandler client : clients) {
 //        }
 //    }
-
-    public synchronized void handleStudent(Socket socket) {
-        try {
-            ObjectInputStream in = new ObjectInputStream(socket.getInputStream());
-            ObjectOutputStream out = new ObjectOutputStream(socket.getOutputStream());
-
-            Student student = (Student) in.readObject();
-            int maxCost = calculateCost();
-
-            out.writeObject(destinations);
-            out.flush();
-
-            students.add(student);
-
-            int populationSize = 50;
-            int maxGenerations = 100;
-            double crossoverRate = 0.8;
-            double mutationRate = 0.1;
-            this.geneticAlgorithm = new GeneticAlgorithm(students, destinations, populationSize, maxGenerations, crossoverRate, mutationRate);
-
-            List<Assignment> optimalAssignments = geneticAlgorithm.run();
-            assignments = optimalAssignments;
-
-            while (true) {
-                String preferenceName = (String) in.readObject();
-                Destination preference = null;
-
-                for (Destination dest : destinations) {
-                    if (dest.getName().equals(preferenceName)) {
-                        preference = dest;
-                        break;
-                    }
-                }
-
-                if (preference != null) {
-                    int preferenceCost = getAssignmentCost(student, preference);
-                    if (preferenceCost <= maxCost && !preference.isFull()) {
-                        Assignment assignment = new Assignment(student, preference);
-                        assignment.setCost(preferenceCost);
-                        assignments.add(assignment);
-                        preference.addStudent(student);
-                        student.setAssignedDest(preference);
-                        break;
-                    } else {
-                        out.writeObject("rejected");
-                        out.flush();
-                    }
-                } else {
-                    out.writeObject("invalid");
-                    out.flush();
-                }
-            }
-
-        } catch (IOException | ClassNotFoundException e) {
-            System.err.println("error handling studen " + e.getMessage());
+    public synchronized void initializeGeneticAlgorithm() {
+        this.geneticAlgorithm = new GeneticAlgorithm(
+                this.students,
+                this.destinations,
+                populationSize,
+                maxGenerations,
+                crossoverRate,
+                mutationRate
+        );
+    }
+    public synchronized void allocateStudents() {
+        bestAssignment = geneticAlgorithm.run();
+        System.out.println("Best assignment found:");
+        for (Assignment assignment : bestAssignment) {
+            System.out.println("Student: " + assignment.getStudent().getName()
+                    + ", Destination: " + assignment.getDestination().getName());
         }
     }
 
+    public void addStudent(Student student) {
+        this.students.add(student);
+    }
+    public List<Assignment> getAssignments() {
+        return this.bestAssignment;
+    }
     public synchronized void removeStudent(Student student) {
         assignments.removeIf(assignment -> assignment.getStudent().equals(student));
         for (Destination destination : destinations) {
@@ -128,19 +103,19 @@ public class Server {
 //        broadcastMessage("remove assignment " + assignment.getStudent().getName() + " " + assignment.getStudent().getSurname() + " " + assignment.getDestination().getName());
     }
 
-    public synchronized void addDestination(Destination destination) {
-        destinations.add(destination);
-    }
+//    public synchronized void addDestination(Destination destination) {
+//        destinations.add(destination);
+//    }
 
-    public synchronized int getMaxStudentCount(Destination destination) {
-        int count = 0;
-        for (Assignment assignment : assignments) {
-            if (assignment.getDestination().equals(destination)) {
-                count++;
-            }
-        }
-        return count;
-    }
+//    public synchronized int getMaxStudentCount(Destination destination) {
+//        int count = 0;
+//        for (Assignment assignment : assignments) {
+//            if (assignment.getDestination().equals(destination)) {
+//                count++;
+//            }
+//        }
+//        return count;
+//    }
 
     public synchronized int getAssignmentCost(Student student, Destination destination) {
         int cost = 0;
@@ -154,20 +129,6 @@ public class Server {
     }
 
     public synchronized List<Destination> getDestinations() { return destinations; }
-
-    public synchronized List<Assignment> getAssignments() { return assignments; }
-
-    public synchronized int calculateCost() {
-        int totalCost = 0;
-        return totalCost;
-    }
-
-//    public synchronized void calculateAssignment() {
-//        List<Student> unassignedStudents = new ArrayList<>();
-//        for (ClientHandler client : clients) {
-//            unassignedStudents.add(client.getStudent());
-//        }
-//    }
 
     public static void main(String[] args) {
         Server server = new Server(1234);

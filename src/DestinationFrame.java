@@ -20,7 +20,9 @@ public class DestinationFrame extends JFrame {
     private List<JComboBox<String>> preferenceComboBoxes;
     private JTextArea preferencesTextArea;
     private JLabel inputErrorLabel;
-    public DestinationFrame(Student student) {
+    Server server;
+    public DestinationFrame(Student student, Server server) {
+        this.server = server;
         this.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         this.setSize(800, 650);
         this.getContentPane().setBackground(Color.decode("#F8CACD"));
@@ -109,7 +111,13 @@ public class DestinationFrame extends JFrame {
                         inputErrorLabel.setText("");
                         student.setPreferences(preferences);
                         dispose();
-                        AssignmentFrame assignmentFrame = new AssignmentFrame();
+                        new Thread(new Runnable() {
+                            public void run() {
+                                server.initializeGeneticAlgorithm();
+                                server.allocateStudents();
+                            }
+                        }).start();
+                        AssignmentFrame assignmentFrame = new AssignmentFrame(server);
                     }
                 }
             }
