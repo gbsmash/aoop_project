@@ -16,8 +16,8 @@ public class Client {
         this.student=student;
         connect(serverHost, serverPort);
         send(student);
-        this.out = new ObjectOutputStream(socket.getOutputStream());
-        this.in = new ObjectInputStream(socket.getInputStream());
+//        this.out = new ObjectOutputStream(socket.getOutputStream());
+//        this.in = new ObjectInputStream(socket.getInputStream());
     }
 
     public void send(Student student) throws IOException {
@@ -38,8 +38,8 @@ public class Client {
     public void connect(String serverHost, int serverPort) throws IOException {
         socket = new Socket(serverHost, serverPort);
         isConnected=true;
-//        out = new ObjectOutputStream(socket.getOutputStream());
-//        in = new ObjectInputStream(socket.getInputStream());
+        out = new ObjectOutputStream(socket.getOutputStream());
+        in = new ObjectInputStream(socket.getInputStream());
         System.out.println("Connected to server at " + serverHost + ":" + serverPort);
     }
 

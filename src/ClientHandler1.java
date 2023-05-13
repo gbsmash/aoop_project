@@ -30,11 +30,9 @@ public class ClientHandler1 implements Runnable {
             System.out.println("Waiting for student...");
             Student student = (Student) in.readObject();
             System.out.println("Received student: " + student.getName());
-            // Add student to the server's student list
-            server.addStudent(student);
-            // Update the Genetic Algorithm with the new student
-            server.initializeGeneticAlgorithm();
-            server.allocateStudents();
+//            server.addStudent(student);
+//            server.initializeGeneticAlgorithm();
+//            server.allocateStudents();
         } catch (IOException | ClassNotFoundException e) {
             e.printStackTrace();
         }

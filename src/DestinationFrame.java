@@ -21,6 +21,8 @@ public class DestinationFrame extends JFrame {
     private JTextArea preferencesTextArea;
     private JLabel inputErrorLabel;
     Server server;
+
+    private AssignmentFrame assignmentFrame;
     public DestinationFrame(Student student, Server server) {
         this.server = server;
         this.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
@@ -110,11 +112,14 @@ public class DestinationFrame extends JFrame {
                     } else {
                         inputErrorLabel.setText("");
                         student.setPreferences(preferences);
+                        server.addStudent(student);
+
                         dispose();
                         new Thread(new Runnable() {
                             public void run() {
                                 server.initializeGeneticAlgorithm();
                                 server.allocateStudents();
+
                             }
                         }).start();
                         AssignmentFrame assignmentFrame = new AssignmentFrame(server);

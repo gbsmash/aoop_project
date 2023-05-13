@@ -1,9 +1,10 @@
 package src;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 
-public class Destination {
+public class Destination implements Serializable {
     private int index;
     private String name;
     private int maxStudents;

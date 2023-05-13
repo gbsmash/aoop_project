@@ -19,10 +19,12 @@ public class Server {
 
     private GeneticAlgorithm geneticAlgorithm;
     private List<Assignment> bestAssignment;
-    private int populationSize = 200;
-    private int maxGenerations = 1000;
+    private int populationSize = 500;
+    private int maxGenerations = 500;
     private double crossoverRate = 0.8;
-    private double mutationRate = 0.02;
+    private double mutationRate = 0.2;
+
+    private AssignmentFrame assignmentFrame;
 
     public Server(int port) {
         this.port = port;
@@ -80,10 +82,16 @@ public class Server {
                     + ", Destination: " + assignment.getDestination().getName());
         }
     }
-
     public void addStudent(Student student) {
         this.students.add(student);
+        if (assignmentFrame != null) {
+            assignmentFrame.dispose();  // Close the previous AssignmentFrame
+        }
+        initializeGeneticAlgorithm();
+        allocateStudents();
+        assignmentFrame = new AssignmentFrame(this);
     }
+
     public List<Assignment> getAssignments() {
         return this.bestAssignment;
     }

@@ -5,6 +5,7 @@ import java.util.*;
 public class GeneticAlgorithm {
     private List<Student> students;
     private List<Destination> destinations;
+    private Destination destination;
     private int populationSize;
     private int maxGenerations;
     private double crossoverRate;
@@ -13,7 +14,7 @@ public class GeneticAlgorithm {
 
     public GeneticAlgorithm(List<Student> students, List<Destination> destinations, int populationSize, int maxGenerations, double crossoverRate, double mutationRate) {
         this.students = students;
-        this.destinations = destinations;
+        this.destinations = destination.getDefaultDestinations();
         this.populationSize = populationSize;
         this.maxGenerations = maxGenerations;
         this.crossoverRate = crossoverRate;
@@ -40,7 +41,8 @@ public class GeneticAlgorithm {
         for (int i = 0; i < populationSize; i++) {
             List<Assignment> assignments = new ArrayList<>();
             for (Student student : students) {
-                Destination destination = destinations.get(random.nextInt(destinations.size()));
+                List<Destination> preferredDestinations = student.getPreferences();
+                Destination destination = preferredDestinations.get(random.nextInt(preferredDestinations.size()));
                 Assignment assignment = new Assignment(student, destination);
                 assignment.setCost(calculateCost(assignment));
                 assignments.add(assignment);
@@ -71,7 +73,8 @@ public class GeneticAlgorithm {
         Assignment assignment = assignments.get(index);
         Student student = assignment.getStudent();
         List<Destination> preferredDestinations = student.getPreferences();
-        Destination newDestination = preferredDestinations.get(random.nextInt(preferredDestinations.size()));
+        int bias = random.nextInt(preferredDestinations.size());
+        Destination newDestination = preferredDestinations.get(bias);
         assignment.setDestination(newDestination);
         assignment.setCost(calculateCost(assignment));
     }
