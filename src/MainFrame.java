@@ -21,10 +21,8 @@ public class MainFrame extends JFrame {
     JLabel title1, title2;
     JButton submitBtn;
     private Client client;
-    private Server server;
     private JTextArea preferencesTextArea;
     private JLabel inputErrorLabel;
-    private AssignmentFrame assignmentFrame;
 
     public MainFrame(){
         this.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
@@ -133,7 +131,7 @@ public class MainFrame extends JFrame {
                     List<Destination> preferences = new ArrayList<>();
                     boolean validInput = true;
 
-                    for (String preference : preferencesInput) {
+                    for (String preference: preferencesInput) {
                         try {
                             int index = Integer.parseInt(preference) - 1;
                             if (index < 0 || index >= destinations.size() || preferences.contains(destinations.get(index))) {
@@ -153,20 +151,8 @@ public class MainFrame extends JFrame {
                         student.setSurname(surname);
                         student.setPreferences(preferences);
                         client = new Client("localhost", 1234, student);
-                        dispose();
                         inputErrorLabel.setText("");
-//                        server.addStudent(student);
-//                        server.addPreference(student, preferences);
-//                        server.genetic();
-//                        dispose();
-//                        new Thread(new Runnable() {
-//                            public synchronized void run() {
-//                                server.initializeGeneticAlgorithm();
-//                                server.allocateStudents();
-//
-//                            }
-//                        }).start();
-//                        assignmentFrame = new AssignmentFrame(server);
+                        MainFrame.this.setVisible(false);
                     }
 
                 }

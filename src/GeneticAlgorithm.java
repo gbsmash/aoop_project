@@ -5,7 +5,6 @@ import java.util.*;
 public class GeneticAlgorithm {
     private List<Student> students;
     private List<Destination> destinations;
-    private Destination destination;
     private int populationSize;
     private int maxGenerations;
     private double crossoverRate;
@@ -14,7 +13,7 @@ public class GeneticAlgorithm {
 
     public GeneticAlgorithm(List<Student> students, List<Destination> destinations, int populationSize, int maxGenerations, double crossoverRate, double mutationRate) {
         this.students = students;
-        this.destinations = destination.getDefaultDestinations();
+        this.destinations = destinations;
         this.populationSize = populationSize;
         this.maxGenerations = maxGenerations;
         this.crossoverRate = crossoverRate;
@@ -27,7 +26,7 @@ public class GeneticAlgorithm {
         int preferenceIndex = student.getPreferences().indexOf(destination);
 
         if (preferenceIndex >= 0) {
-            return (preferenceIndex + 1) * (preferenceIndex + 1);
+            return preferenceIndex * preferenceIndex;
         } else {
             return 10 * 5 * 5;
         }
@@ -35,14 +34,10 @@ public class GeneticAlgorithm {
 
     public List<List<Assignment>> initializePopulation() {
         List<List<Assignment>> population = new ArrayList<>();
-        if (destinations.isEmpty()) {
-            throw new IllegalArgumentException("Destinations list must not be empty");
-        }
         for (int i = 0; i < populationSize; i++) {
             List<Assignment> assignments = new ArrayList<>();
             for (Student student : students) {
-                List<Destination> preferredDestinations = student.getPreferences();
-                Destination destination = preferredDestinations.get(random.nextInt(preferredDestinations.size()));
+                Destination destination = destinations.get(random.nextInt(destinations.size()));
                 Assignment assignment = new Assignment(student, destination);
                 assignment.setCost(calculateCost(assignment));
                 assignments.add(assignment);
@@ -54,6 +49,9 @@ public class GeneticAlgorithm {
         }
         return population;
     }
+
+
+
 
     private boolean isValid(List<Assignment> assignments) {
         Map<Destination, Integer> destinationCounts = new HashMap<>();
@@ -71,13 +69,19 @@ public class GeneticAlgorithm {
     private void mutate(List<Assignment> assignments) {
         int index = random.nextInt(assignments.size());
         Assignment assignment = assignments.get(index);
-        Student student = assignment.getStudent();
-        List<Destination> preferredDestinations = student.getPreferences();
-        int bias = random.nextInt(preferredDestinations.size());
-        Destination newDestination = preferredDestinations.get(bias);
+        Destination newDestination;
+        do {
+            newDestination = destinations.get(random.nextInt(destinations.size()));
+        } while (getDestinationCount(assignments, newDestination) >= newDestination.getMaxStudents());
         assignment.setDestination(newDestination);
         assignment.setCost(calculateCost(assignment));
     }
+
+    private int getDestinationCount(List<Assignment> assignments, Destination destination) {
+        return (int) assignments.stream().filter(a -> a.getDestination().equals(destination)).count();
+    }
+
+
 
     public List<Assignment> run() {
         List<List<Assignment>> population = initializePopulation();
@@ -87,8 +91,8 @@ public class GeneticAlgorithm {
             List<Double> fitness = evaluatePopulation(population);
             List<List<Assignment>> parents = selection(population, fitness);
             List<List<Assignment>> offspring = crossover(parents);
-            offspring = mutation(offspring);
-            population = replacement(population, offspring, fitness);
+            offspring = mutation(offspring); // uncommented
+            population = replacement(population, offspring, fitness); //elitism
             generation++;
         }
 
@@ -114,7 +118,7 @@ public class GeneticAlgorithm {
         double totalFitness = fitness.stream().mapToDouble(Double::doubleValue).sum();
 
         for (int i = 0; i < populationSize; i++) {
-            double randomValue = random.nextDouble() * totalFitness;
+            double randomValue = random.nextDouble() * totalFitness; //random number between 0 and totalfitness
             double currentSum = 0;
             int selectedIndex = 0;
             for (int j = 0; j < fitness.size(); j++) {
@@ -124,30 +128,30 @@ public class GeneticAlgorithm {
                     break;
                 }
             }
-            parents.add(population.get(selectedIndex));
+//            parents.add(population.get(selectedIndex));
+            parents.add(new ArrayList<>(population.get(selectedIndex))); // Create a new list for each selected individual
+
         }
         return parents;
     }
 
     public List<List<Assignment>> crossover(List<List<Assignment>> parents) {
-        for (List<Assignment> parent : parents) {
-            if (parent.isEmpty()) {
-                throw new IllegalArgumentException("Parent lists must not be empty");
-            }
-        }
         List<List<Assignment>> offspring = new ArrayList<>();
         for (int i = 0; i < parents.size(); i += 2) {
-            List<Assignment> parent1 = parents.get(i);
-            List<Assignment> parent2 = parents.get(i + 1);
+            if (random.nextDouble() < crossoverRate) {  // Check against crossoverRate
+                List<Assignment> parent1 = parents.get(i);
+                List<Assignment> parent2 = parents.get(i + 1);
+                int crossoverPoint = random.nextInt(parent1.size());
+                List<Assignment> child1 = new ArrayList<>(parent1.subList(0, crossoverPoint));
+                child1.addAll(parent2.subList(crossoverPoint, parent2.size()));
+                List<Assignment> child2 = new ArrayList<>(parent2.subList(0, crossoverPoint));
+                child2.addAll(parent1.subList(crossoverPoint, parent1.size()));
 
-            int crossoverPoint = random.nextInt(parent1.size());
-            List<Assignment> child1 = new ArrayList<>(parent1.subList(0, crossoverPoint));
-            List<Assignment> child2 = new ArrayList<>(parent2.subList(0, crossoverPoint));
-            child1.addAll(parent2.subList(crossoverPoint, parent2.size()));
-            child2.addAll(parent1.subList(crossoverPoint, parent1.size()));
-
-            offspring.add(child1);
-            offspring.add(child2);
+                if (isValid(child1) && isValid(child2)) {
+                    offspring.add(child1);
+                    offspring.add(child2);
+                }
+            }
         }
         return offspring;
     }
@@ -163,12 +167,15 @@ public class GeneticAlgorithm {
         return offspring;
     }
 
+
     public List<List<Assignment>> replacement(List<List<Assignment>> population, List<List<Assignment>> offspring, List<Double> fitness) {
         Collections.sort(offspring, Comparator.comparingDouble(this::calculateSolutionFitness).reversed());
         for (int i = 0; i < offspring.size(); i++) {
-            int worstIndex = getWorstSolutionIndex(fitness);
-            population.set(worstIndex, offspring.get(i));
-            fitness.set(worstIndex, calculateSolutionFitness(offspring.get(i)));
+            if (isValid(offspring.get(i))) {
+                int worstIndex = getWorstSolutionIndex(fitness);
+                population.set(worstIndex, offspring.get(i));
+                fitness.set(worstIndex, calculateSolutionFitness(offspring.get(i)));
+            }
         }
         return population;
     }
@@ -200,5 +207,105 @@ public class GeneticAlgorithm {
         }
         return worstIndex;
     }
+
+
+//    public static void main(String[] args) {
+//                List<Student> studentList = new ArrayList<>();
+//        List<Destination> destinations = Destination.getDefaultDestinations();
+//
+//        Student st1 = new Student("Narmin", "Bambusik");
+//        List<Destination> preferredDestinations1 = new ArrayList<>();
+//        preferredDestinations1.add(destinations.get(0));
+//        preferredDestinations1.add(destinations.get(1));
+//        preferredDestinations1.add(destinations.get(2));
+//        preferredDestinations1.add(destinations.get(3));
+//        preferredDestinations1.add(destinations.get(4));
+//        st1.setPreferences(preferredDestinations1);
+//
+//        studentList.add(st1);
+//
+//        Student st2 = new Student("Shems", "Bambusik");
+//        List<Destination> preferredDestinations2 = new ArrayList<>();
+//        preferredDestinations2.add(destinations.get(1));
+//        preferredDestinations2.add(destinations.get(8));
+//        preferredDestinations2.add(destinations.get(2));
+//        preferredDestinations2.add(destinations.get(3));
+//        preferredDestinations2.add(destinations.get(4));
+//        st2.setPreferences(preferredDestinations2);
+//
+//        studentList.add(st2);
+//
+//        Student st3 = new Student("Aydan", "Bambusik");
+//        List<Destination> preferredDestinations3 = new ArrayList<>();
+//        preferredDestinations3.add(destinations.get(2));
+//        preferredDestinations3.add(destinations.get(1));
+//        preferredDestinations3.add(destinations.get(8));
+//        preferredDestinations3.add(destinations.get(3));
+//        preferredDestinations3.add(destinations.get(4));
+//        st3.setPreferences(preferredDestinations3);
+//
+//        studentList.add(st3);
+//
+//        Student st4 = new Student("Amina", "Bambusik");
+//        List<Destination> preferredDestinations4 = new ArrayList<>();
+//        preferredDestinations4.add(destinations.get(3));
+//        preferredDestinations4.add(destinations.get(1));
+//        preferredDestinations4.add(destinations.get(2));
+//        preferredDestinations4.add(destinations.get(9));
+//        preferredDestinations4.add(destinations.get(4));
+//        st4.setPreferences(preferredDestinations4);
+//
+//        studentList.add(st4);
+//
+//        Student st5 = new Student("Ktoto", "Bambusik");
+//        List<Destination> preferredDestinations5 = new ArrayList<>();
+//        preferredDestinations5.add(destinations.get(4));
+//        preferredDestinations5.add(destinations.get(1));
+//        preferredDestinations5.add(destinations.get(2));
+//        preferredDestinations5.add(destinations.get(3));
+//        preferredDestinations5.add(destinations.get(5));
+//        st5.setPreferences(preferredDestinations5);
+//
+//        studentList.add(st5);
+//
+//
+//
+//        GeneticAlgorithm ga = new GeneticAlgorithm(studentList, destinations, 50, 200, 0.8, 0.05);
+//        List<Assignment> assignments = ga.run();
+//        for(Assignment a: assignments){
+//            System.out.println(a.getStudent().getName()+ " " + a.getStudent().getSurname() + " : " + a.getDestination().getIndex() + ")"+ a.getDestination().getName());
+//        }
+//
+////        List<List<Assignment>> population= ga.initializePopulation();
+////        List<Double> fitness = ga.evaluatePopulation(population);
+////        List<List<Assignment>> parents = ga.selection(population, fitness);
+////        List<List<Assignment>> offspring = ga.crossover(parents);
+////        offspring = ga.mutation(offspring);
+////        population = ga.replacement(population, offspring, fitness); //elitism
+////
+////        for(int k =0;k< 12; k++){
+////            fitness = ga.evaluatePopulation(population);
+////            parents = ga.selection(population, fitness);
+////            offspring = ga.crossover(parents);
+//////            offspring = ga.mutation(offspring);
+////            population = ga.replacement(population, offspring, fitness); //elitism
+////        }
+////
+////
+////        int i=1;
+////        for(List<Assignment> al: population ){
+////            System.out.println(i);
+////            for (Assignment a: al){
+////                System.out.println(a.getStudent().getName()+ " "+ a.getDestination().getIndex());
+////            }
+////            i++;
+////            System.out.println();
+////        }
+//
+//
+//
+//
+//
+//    }
 }
 

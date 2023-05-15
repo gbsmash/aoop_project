@@ -21,10 +21,10 @@ public class Server {
 
     private GeneticAlgorithm geneticAlgorithm;
     private List<Assignment> bestAssignment;
-    private int populationSize = 50;
-    private int maxGenerations = 200;
+    private int populationSize = 100;
+    private int maxGenerations = 250;
     private double crossoverRate = 0.8;
-    private double mutationRate = 0.05;
+    private double mutationRate = 0.08;
 
     private AssignmentFrame assignmentFrame;
     private Map<Student, List<Destination>> preferencesMap;
