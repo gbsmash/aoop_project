@@ -45,9 +45,6 @@ public class Server {
             isRunning = true;
             System.out.println("Server started on port " + port);
 
-            // Add code to populate your students list here.
-            // this.students = ...;
-
             this.destinations = Destination.getDefaultDestinations();
             initializeGeneticAlgorithm();
 
@@ -65,10 +62,6 @@ public class Server {
 
     }
 
-//    public void broadcastMessage(String message) {
-//        for (ClientHandler client : clients) {
-//        }
-//    }
     public void initializeGeneticAlgorithm() {
         this.geneticAlgorithm = new GeneticAlgorithm(
                 this.students,
@@ -106,13 +99,12 @@ public class Server {
             out.close();
             socket.close();
         } catch (IOException e) {
-            // Handle any networking errors here
             e.printStackTrace();
         }
     }
     public void genetic() {
         if (assignmentFrame != null) {
-            assignmentFrame.dispose();  // Close the previous AssignmentFrame
+            assignmentFrame.dispose();
         }
         initializeGeneticAlgorithm();
         allocateStudents();

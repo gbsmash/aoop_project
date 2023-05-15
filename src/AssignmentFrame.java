@@ -59,7 +59,7 @@ public class AssignmentFrame extends JFrame {
     public void updateTable() {
         List<Assignment> bestAssignment = server.getAssignments();
         if (bestAssignment != null) {
-            model.setRowCount(0); // Clear existing rows
+            model.setRowCount(0);
             for (Assignment assignment : bestAssignment) {
                 Object[] row = new Object[2];
                 row[0] = assignment.getStudent().getName();

@@ -6,8 +6,7 @@ import java.net.Socket;
 import java.util.ArrayList;
 import java.util.List;
 
-public class ClientHandler1 implements Runnable {
-//    private final ServerSocket serverSocket;
+public class ClientHandler1 extends Thread {
     private final Socket socket;
     private ObjectInputStream in;
     private ObjectOutputStream out;
@@ -38,13 +37,11 @@ public class ClientHandler1 implements Runnable {
 //            List<Destination> preferences = (List<Destination>) in.readObject();
 //            student.addPreference(preferences);
             nbStudent++;
-            // Optionally, you can start the genetic algorithm and allocate students here
 
 
         } catch (IOException | ClassNotFoundException e) {
             e.printStackTrace();
         } finally {
-            // Close the connection
             try {
                 in.close();
                 out.close();

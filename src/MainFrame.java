@@ -26,52 +26,47 @@ public class MainFrame extends JFrame {
 
     public MainFrame(){
         this.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-        this.setSize(700,570);
+        this.setSize(800,700);
         this.getContentPane().setBackground(Color.decode("#E6C0E9"));
         this.setLocationRelativeTo(null);
         this.setLayout(null);
 
         title = new JLabel("Enter your name and surname");
-        title.setBounds(170, 50, 500, 100);
+        title.setBounds(200, 10, 500, 100);
         title.setFont(new Font("Serif", Font.BOLD, 30));
         this.add(title);
 
         name = new JLabel("Name");
-        name.setBounds(270,130,300,100);
+        name.setBounds(300,60,300,100);
         name.setFont(new Font("Serif", Font.BOLD, 17));
         this.add(name);
 
         t1 = new JTextArea();
-        t1.setBounds(270, 195, 170, 25);
+        t1.setBounds(300, 120, 170, 25);
         t1.setBorder(BorderFactory.createLineBorder(Color.BLACK));
         t1.setFont(new Font("Serif", Font.PLAIN, 18));
         this.add(t1);
 
         surname = new JLabel("Surname ");
-        surname.setBounds(270,210,300,100);
+        surname.setBounds(300,120,300,100);
         surname.setFont(new Font("Serif", Font.BOLD, 17));
         this.add(surname);
 
         t2 = new JTextArea();
-        t2.setBounds(270, 275, 170, 25);
+        t2.setBounds(300, 180, 170, 25);
         t2.setBorder(BorderFactory.createLineBorder(Color.BLACK));
         t2.setFont(new Font("Serif", Font.PLAIN, 18));
         this.add(t2);
 
-        this.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-        this.setSize(800, 650);
-        this.getContentPane().setBackground(Color.decode("#F8CACD"));
-        this.setLocationRelativeTo(null);
-        this.setLayout(null);
 
         title1 = new JLabel("Enter your desired destinations");
-        title1.setBounds(210, 280, 400, 100);
-        title1.setFont(new Font("Serif", Font.BOLD, 30));
+        title1.setBounds(210, 180, 400, 100);
+        title1.setFont(new Font("Serif", Font.BOLD, 25));
         this.add(title1);
 
         title2 = new JLabel("<html>(only corresponding numbers, in descending order, comma separated)<br>Example: 3, 6, 2, 5, 9</html>");
-        title2.setBounds(100, 290, 900, 100);
-        title2.setFont(new Font("Serif", Font.PLAIN, 21));
+        title2.setBounds(100, 220, 900, 100);
+        title2.setFont(new Font("Serif", Font.PLAIN, 20));
         this.add(title2);
 
         List<Destination> destinations = Destination.getDefaultDestinations();
@@ -108,7 +103,7 @@ public class MainFrame extends JFrame {
 
 
         submitBtn = new JButton("Submit");
-        submitBtn.setBounds(540, 400, 100, 40);
+        submitBtn.setBounds(540, 450, 100, 40);
         submitBtn.setBackground(Color.decode("#8D89A6"));
         submitBtn.setFont(new Font("Arial", Font.BOLD, 17));
         submitBtn.setForeground(Color.white);
