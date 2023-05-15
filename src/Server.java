@@ -116,7 +116,7 @@ public class Server {
         }
         initializeGeneticAlgorithm();
         allocateStudents();
-        assignmentFrame = new AssignmentFrame(this);
+        assignmentFrame = new AssignmentFrame(bestAssignment);
     }
 
     public List<Assignment> getAssignments() {

@@ -69,16 +69,9 @@ public class GeneticAlgorithm {
     private void mutate(List<Assignment> assignments) {
         int index = random.nextInt(assignments.size());
         Assignment assignment = assignments.get(index);
-        Destination newDestination;
-        do {
-            newDestination = destinations.get(random.nextInt(destinations.size()));
-        } while (getDestinationCount(assignments, newDestination) >= newDestination.getMaxStudents());
+        Destination newDestination = destinations.get(random.nextInt(destinations.size()));
         assignment.setDestination(newDestination);
         assignment.setCost(calculateCost(assignment));
-    }
-
-    private int getDestinationCount(List<Assignment> assignments, Destination destination) {
-        return (int) assignments.stream().filter(a -> a.getDestination().equals(destination)).count();
     }
 
 
@@ -87,11 +80,12 @@ public class GeneticAlgorithm {
         List<List<Assignment>> population = initializePopulation();
         int generation = 0;
 
+
         while (generation < maxGenerations) {
             List<Double> fitness = evaluatePopulation(population);
             List<List<Assignment>> parents = selection(population, fitness);
             List<List<Assignment>> offspring = crossover(parents);
-            offspring = mutation(offspring); // uncommented
+//            offspring = mutation(offspring);
             population = replacement(population, offspring, fitness); //elitism
             generation++;
         }
@@ -138,19 +132,29 @@ public class GeneticAlgorithm {
     public List<List<Assignment>> crossover(List<List<Assignment>> parents) {
         List<List<Assignment>> offspring = new ArrayList<>();
         for (int i = 0; i < parents.size(); i += 2) {
+            List<Assignment> parent1 = parents.get(i);
+            List<Assignment> parent2 = parents.get(i + 1);
+
+//            int crossoverPoint = random.nextInt(parent1.size());
+//            List<Assignment> child1 = new ArrayList<>(parent1.subList(0, crossoverPoint));
+//            List<Assignment> child2 = new ArrayList<>(parent2.subList(0, crossoverPoint));
+//            child1.addAll(parent2.subList(crossoverPoint, parent2.size()));
+//            child2.addAll(parent1.subList(crossoverPoint, parent1.size()));
+//
+//            offspring.add(child1);
+//            offspring.add(child2);
             if (random.nextDouble() < crossoverRate) {  // Check against crossoverRate
-                List<Assignment> parent1 = parents.get(i);
-                List<Assignment> parent2 = parents.get(i + 1);
                 int crossoverPoint = random.nextInt(parent1.size());
                 List<Assignment> child1 = new ArrayList<>(parent1.subList(0, crossoverPoint));
-                child1.addAll(parent2.subList(crossoverPoint, parent2.size()));
                 List<Assignment> child2 = new ArrayList<>(parent2.subList(0, crossoverPoint));
+                child1.addAll(parent2.subList(crossoverPoint, parent2.size()));
                 child2.addAll(parent1.subList(crossoverPoint, parent1.size()));
 
-                if (isValid(child1) && isValid(child2)) {
-                    offspring.add(child1);
-                    offspring.add(child2);
-                }
+                offspring.add(child1);
+                offspring.add(child2);
+            } else {
+                offspring.add(parent1);  // If crossover doesn't occur, add parents as they are
+                offspring.add(parent2);
             }
         }
         return offspring;
@@ -171,11 +175,9 @@ public class GeneticAlgorithm {
     public List<List<Assignment>> replacement(List<List<Assignment>> population, List<List<Assignment>> offspring, List<Double> fitness) {
         Collections.sort(offspring, Comparator.comparingDouble(this::calculateSolutionFitness).reversed());
         for (int i = 0; i < offspring.size(); i++) {
-            if (isValid(offspring.get(i))) {
-                int worstIndex = getWorstSolutionIndex(fitness);
-                population.set(worstIndex, offspring.get(i));
-                fitness.set(worstIndex, calculateSolutionFitness(offspring.get(i)));
-            }
+            int worstIndex = getWorstSolutionIndex(fitness);
+            population.set(worstIndex, offspring.get(i));
+            fitness.set(worstIndex, calculateSolutionFitness(offspring.get(i)));
         }
         return population;
     }

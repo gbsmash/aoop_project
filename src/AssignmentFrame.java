@@ -9,12 +9,8 @@ import java.util.List;
 
 public class AssignmentFrame extends JFrame {
     JLabel title1;
-    JTable table;
-    DefaultTableModel model;
-    Server server;
 
-    public AssignmentFrame(Server server) {
-        this.server = server;
+    public AssignmentFrame(List<Assignment> bestAssignment){
         this.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         this.setSize(800, 650);
         this.getContentPane().setBackground(Color.decode("#F2D5F8"));
@@ -26,50 +22,29 @@ public class AssignmentFrame extends JFrame {
         title1.setFont(new Font("Serif", Font.BOLD, 30));
         this.add(title1);
 
-        JButton updateButton = new JButton("Update");
-        updateButton.setBounds(600, 45, 100, 30);
-        updateButton.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                updateTable();
-            }
-        });
-        this.add(updateButton);
-
         String[] columnNames = {"Student", "Destination"};
-        model = new DefaultTableModel(columnNames, 0);
 
-        table = new JTable(model);
-        table.setBounds(100, 150, 600, 350);
-        table.setFont(new Font("Arial", Font.PLAIN, 16));
-        table.getTableHeader().setFont(new Font("Arial", Font.BOLD, 18));
-        table.setRowHeight(25);
-        table.setFillsViewportHeight(true);
-        table.setBackground(Color.decode("#E6C0E9"));
-
-        JScrollPane scrollPane = new JScrollPane(table);
-        scrollPane.setBounds(100, 150, 600, 350);
-
-        this.add(scrollPane);
-
-        this.setVisible(true);
-        updateTable();
-    }
-
-    public void updateTable() {
-        List<Assignment> bestAssignment = server.getAssignments();
-        if (bestAssignment != null) {
-            model.setRowCount(0); // Clear existing rows
-            for (Assignment assignment : bestAssignment) {
-                Object[] row = new Object[2];
-                row[0] = assignment.getStudent().getName();
-                row[1] = assignment.getDestination().getName();
-                model.addRow(row);
+        if(bestAssignment != null) {
+            Object[][] data = new Object[bestAssignment.size()][2];
+            for (int i = 0; i < bestAssignment.size(); i++) {
+                data[i][0] = bestAssignment.get(i).getStudent().getName();
+                data[i][1] = bestAssignment.get(i).getDestination().getName();
             }
+
+            DefaultTableModel model = new DefaultTableModel(data, columnNames);
+            JTable table = new JTable(model);
+            table.setBounds(100, 150, 600, 350);
+            table.setFont(new Font("Arial", Font.PLAIN, 16));
+            table.getTableHeader().setFont(new Font("Arial", Font.BOLD, 18));
+            table.setRowHeight(25);
+            table.setFillsViewportHeight(true);
+            table.setBackground(Color.decode("#E6C0E9"));
+
+            JScrollPane scrollPane = new JScrollPane(table);
+            scrollPane.setBounds(100, 150, 600, 350);
+
+            this.add(scrollPane);
         }
+        this.setVisible(true);
     }
 }
-
-
-
-

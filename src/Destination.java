@@ -3,6 +3,7 @@ package src;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 
 public class Destination implements Serializable {
     private int index;
@@ -75,6 +76,13 @@ public class Destination implements Serializable {
         return maxStudents;
     }
 
+    @Override
+    public boolean equals(Object obj) {
+        if (this == obj) { return true; }
+        if (obj == null || getClass() != obj.getClass()) { return false; }
+        Destination other = (Destination) obj;
+        return Objects.equals(name, other.name);
+    }
     public List<Student> getAssignedStudents() {
         return assignedStudents;
     }
