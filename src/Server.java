@@ -1,11 +1,8 @@
 import java.io.IOException;
-import java.io.ObjectOutputStream;
 import java.net.ServerSocket;
 import java.net.Socket;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 public class Server {
     private ServerSocket serverSocket;
@@ -36,12 +33,12 @@ public class Server {
             isRunning = true;
             System.out.println("Server started on port " + port);
 
-            while (isRunning) { // listen
+            while (isRunning) { // listen constantly to connected clients
                 Socket socket = serverSocket.accept();
                 System.out.println("Client connected " + socket.getInetAddress());
                 ClientHandler clientHandler = new ClientHandler(socket, this);
                 clients.add(clientHandler);
-                new Thread(clientHandler).start();
+                new Thread(clientHandler).start(); // start a thread for each student
             }
         } catch (IOException e) {
             System.err.println("Error start " + e.getMessage());

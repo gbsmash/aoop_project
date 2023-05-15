@@ -1,17 +1,16 @@
 import javax.swing.*;
 import javax.swing.table.DefaultTableModel;
 import java.awt.*;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 import java.util.List;
 
 public class AssignmentFrame extends JFrame {
     JLabel title1;
+    JTable table;
 
     public AssignmentFrame(List<Assignment> bestAssignment){
         this.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         this.setSize(800, 650);
-        this.getContentPane().setBackground(Color.decode("#F2D5F8"));
+        this.getContentPane().setBackground(Color.decode("#dfd3e6"));
         this.setLocationRelativeTo(null);
         this.setLayout(null);
 
@@ -30,13 +29,13 @@ public class AssignmentFrame extends JFrame {
             }
 
             DefaultTableModel model = new DefaultTableModel(data, columnNames);
-            JTable table = new JTable(model);
+            table = new JTable(model);
             table.setBounds(100, 150, 600, 350);
             table.setFont(new Font("Arial", Font.PLAIN, 16));
             table.getTableHeader().setFont(new Font("Arial", Font.BOLD, 18));
             table.setRowHeight(25);
             table.setFillsViewportHeight(true);
-            table.setBackground(Color.decode("#e9d3eb"));
+            table.setBackground(Color.decode("#f2edf2"));
 
             JScrollPane scrollPane = new JScrollPane(table);
             scrollPane.setBounds(100, 150, 600, 350);

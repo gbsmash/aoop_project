@@ -1,20 +1,15 @@
 import java.io.*;
 import java.net.Socket;
-import java.util.List;
-import java.util.Scanner;
 
 public class Client {
-    private Student student;
     private Socket socket;
-    private ObjectInputStream in;
     private ObjectOutputStream out;
     public boolean isConnected;
 
     public Client(String serverHost, int serverPort, Student student) {
-        this.student = student;
         try {
-            connect(serverHost, serverPort);
-            send(student);
+            connect(serverHost, serverPort); // connect to server
+            send(student); // send student to server
         } catch(IOException e) {
             e.printStackTrace();
         }
@@ -30,7 +25,6 @@ public class Client {
         socket = new Socket(serverHost, serverPort);
         isConnected=true;
         out = new ObjectOutputStream(socket.getOutputStream());
-        in = new ObjectInputStream(socket.getInputStream());
         System.out.println("Connected to server at " + serverHost + ":" + serverPort);
     }
 
@@ -42,7 +36,7 @@ public class Client {
         }
     }
 
-    public static void main(String[] args) throws IOException {
+    public static void main(String[] args) {
         MainFrame f = new MainFrame();
     }
 }

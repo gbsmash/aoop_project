@@ -1,13 +1,11 @@
 import java.io.*;
 import java.net.Socket;
-import java.util.ArrayList;
-import java.util.List;
 
 public class ClientHandler implements Runnable {
     private final Socket socket;
-    private ObjectInputStream in;
-    private ObjectOutputStream out;
-    private Server server;
+    private final ObjectInputStream in;
+    private final ObjectOutputStream out;
+    private final Server server;
     public ClientHandler(Socket socket, Server server) throws IOException {
         this.server = server;
         this.socket = socket;
@@ -19,11 +17,11 @@ public class ClientHandler implements Runnable {
     public void run() {
         try {
             System.out.println("Waiting for student...");
-            Student student = (Student) in.readObject();
+            Student student = (Student) in.readObject(); // get student from client
             System.out.println("Received student: " + student.getName());
 
-            server.addStudent(student);
-            server.genetic();
+            server.addStudent(student); // add to students array
+            server.genetic(); // implement the algorithm
 
         } catch (IOException | ClassNotFoundException e) {
             e.printStackTrace();

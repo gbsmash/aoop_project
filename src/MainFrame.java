@@ -1,17 +1,9 @@
 import javax.swing.*;
-import javax.swing.border.EmptyBorder;
-import javax.swing.text.NumberFormatter;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.io.IOException;
-import java.io.PrintWriter;
-import java.net.ServerSocket;
-import java.net.Socket;
-import java.text.NumberFormat;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.concurrent.ExecutionException;
 
 public class MainFrame extends JFrame {
     JLabel title, name, surname;
@@ -24,7 +16,7 @@ public class MainFrame extends JFrame {
     public MainFrame(){
         this.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         this.setSize(790,700);
-        this.getContentPane().setBackground(Color.decode("#f6dff7"));
+        this.getContentPane().setBackground(Color.decode("#ede6ed"));
         this.setLocationRelativeTo(null);
         this.setLayout(null);
 
@@ -78,7 +70,7 @@ public class MainFrame extends JFrame {
         destinationsTextArea.setBounds(110, 330, 300, 270);
         destinationsTextArea.setFont(new Font("Serif", Font.PLAIN, 19));
         destinationsTextArea.setBorder(BorderFactory.createLineBorder(Color.BLACK));
-        destinationsTextArea.setBackground(Color.decode("#c6bccc"));
+        destinationsTextArea.setBackground(Color.decode("#cac2cf"));
         this.add(destinationsTextArea);
 
         JLabel inputLabel = new JLabel("Preferences");
