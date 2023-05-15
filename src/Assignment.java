@@ -9,7 +9,6 @@ public class Assignment {
         this.student = student;
         this.destination = destination;
     }
-
     public Student getStudent() {
         return student;
     }

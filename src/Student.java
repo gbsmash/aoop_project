@@ -1,6 +1,7 @@
 package src;
 
 import java.io.Serializable;
+import java.util.ArrayList;
 import java.util.List;
 
 public class Student implements Serializable {
@@ -9,11 +10,14 @@ public class Student implements Serializable {
     private List<Destination> preferences;
     private Destination assignedDest;
 
-    public Student() {}
+    public Student() {
+        preferences = new ArrayList<>();
+    }
 
     public Student(String name, String surname) {
         this.name = name;
         this.surname = surname;
+        preferences = new ArrayList<>();
     }
 
     public String getName() {
@@ -30,6 +34,10 @@ public class Student implements Serializable {
 
     public void setSurname(String surname) {
         this.surname = surname;
+    }
+
+    public void addPreference(Destination destination) {
+        this.preferences.add(destination);
     }
 
     public List<Destination> getPreferences() {

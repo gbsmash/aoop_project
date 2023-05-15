@@ -20,10 +20,12 @@ public class DestinationFrame extends JFrame {
     private List<JComboBox<String>> preferenceComboBoxes;
     private JTextArea preferencesTextArea;
     private JLabel inputErrorLabel;
-    Server server;
+    private Server server;
+    private Student student;
 
     private AssignmentFrame assignmentFrame;
     public DestinationFrame(Student student, Server server) {
+        this.student = student;
         this.server = server;
         this.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         this.setSize(800, 650);
@@ -111,18 +113,19 @@ public class DestinationFrame extends JFrame {
                         inputErrorLabel.setText("Enter unique numbers in range 1-10");
                     } else {
                         inputErrorLabel.setText("");
-                        student.setPreferences(preferences);
                         server.addStudent(student);
-
+                        server.addPreference(student, preferences);
+                        student.setPreferences(preferences);
+                        server.genetic();
                         dispose();
-                        new Thread(new Runnable() {
-                            public void run() {
-                                server.initializeGeneticAlgorithm();
-                                server.allocateStudents();
-
-                            }
-                        }).start();
-                        AssignmentFrame assignmentFrame = new AssignmentFrame(server);
+//                        new Thread(new Runnable() {
+//                            public synchronized void run() {
+//                                server.initializeGeneticAlgorithm();
+//                                server.allocateStudents();
+//
+//                            }
+//                        }).start();
+//                        assignmentFrame = new AssignmentFrame(server);
                     }
                 }
             }

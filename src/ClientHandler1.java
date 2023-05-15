@@ -3,6 +3,7 @@ package src;
 import java.io.*;
 import java.net.ServerSocket;
 import java.net.Socket;
+import java.util.ArrayList;
 import java.util.List;
 
 public class ClientHandler1 implements Runnable {
@@ -18,7 +19,8 @@ public class ClientHandler1 implements Runnable {
         this.socket = socket;
 //        this.socket = serverSocket.accept();
 //        this.server = server;
-        this.nbStudent = 0;
+        this.nbStudent = nbStudent;
+        this.students = new ArrayList<>();
         out = new ObjectOutputStream(socket.getOutputStream());
         in = new ObjectInputStream(socket.getInputStream());
 
@@ -30,11 +32,26 @@ public class ClientHandler1 implements Runnable {
             System.out.println("Waiting for student...");
             Student student = (Student) in.readObject();
             System.out.println("Received student: " + student.getName());
-//            server.addStudent(student);
-//            server.initializeGeneticAlgorithm();
-//            server.allocateStudents();
+
+            server.addStudent(student);
+            server.genetic();
+//            List<Destination> preferences = (List<Destination>) in.readObject();
+//            student.addPreference(preferences);
+            nbStudent++;
+            // Optionally, you can start the genetic algorithm and allocate students here
+
+
         } catch (IOException | ClassNotFoundException e) {
             e.printStackTrace();
+        } finally {
+            // Close the connection
+            try {
+                in.close();
+                out.close();
+                socket.close();
+            } catch (IOException e) {
+                throw new RuntimeException(e);
+            }
         }
     }
 }

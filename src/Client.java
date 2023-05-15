@@ -12,12 +12,14 @@ public class Client {
     private ObjectOutputStream out;
     public boolean isConnected;
 
-    public Client(String serverHost, int serverPort, Student student) throws IOException {
-        this.student=student;
-        connect(serverHost, serverPort);
-        send(student);
-//        this.out = new ObjectOutputStream(socket.getOutputStream());
-//        this.in = new ObjectInputStream(socket.getInputStream());
+    public Client(String serverHost, int serverPort, Student student) {
+        this.student = student;
+        try {
+            connect(serverHost, serverPort);
+            send(student);
+        } catch(IOException e) {
+            e.printStackTrace();
+        }
     }
 
     public void send(Student student) throws IOException {
@@ -52,6 +54,6 @@ public class Client {
     }
 
     public static void main(String[] args) throws IOException {
-        MainFrame f = new MainFrame(new Server(1234));
+        MainFrame f = new MainFrame();
     }
 }

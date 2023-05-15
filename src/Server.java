@@ -1,17 +1,19 @@
 package src;
 
 import java.io.IOException;
-import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.net.ServerSocket;
 import java.net.Socket;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 public class Server {
     private ServerSocket serverSocket;
     private List<ClientHandler1> clients;
     private List<Destination> destinations;
+    private List<Destination> preferences;
     private int port;
     private boolean isRunning;
     private List<Assignment> assignments;
@@ -19,19 +21,22 @@ public class Server {
 
     private GeneticAlgorithm geneticAlgorithm;
     private List<Assignment> bestAssignment;
-    private int populationSize = 500;
-    private int maxGenerations = 500;
+    private int populationSize = 50;
+    private int maxGenerations = 200;
     private double crossoverRate = 0.8;
-    private double mutationRate = 0.2;
+    private double mutationRate = 0.05;
 
     private AssignmentFrame assignmentFrame;
-
+    private Map<Student, List<Destination>> preferencesMap;
     public Server(int port) {
         this.port = port;
         clients = new ArrayList<>();
         destinations = new ArrayList<>();
         assignments = new ArrayList<>();
         students = new ArrayList<>();
+        preferences = new ArrayList<>();
+        preferencesMap = new HashMap<>();
+//        assignmentFrame = new AssignmentFrame(this);
     }
 
     public void start() {
@@ -64,7 +69,7 @@ public class Server {
 //        for (ClientHandler client : clients) {
 //        }
 //    }
-    public synchronized void initializeGeneticAlgorithm() {
+    public void initializeGeneticAlgorithm() {
         this.geneticAlgorithm = new GeneticAlgorithm(
                 this.students,
                 this.destinations,
@@ -74,16 +79,38 @@ public class Server {
                 mutationRate
         );
     }
-    public synchronized void allocateStudents() {
+    public void allocateStudents() {
         bestAssignment = geneticAlgorithm.run();
         System.out.println("Best assignment found:");
         for (Assignment assignment : bestAssignment) {
             System.out.println("Student: " + assignment.getStudent().getName()
                     + ", Destination: " + assignment.getDestination().getName());
         }
+        System.out.println(this.students);
+
     }
     public void addStudent(Student student) {
         this.students.add(student);
+
+//        this.students.add
+    }
+    public void addPreference(Student student, List<Destination> preferences) {
+        try {
+            Socket socket = new Socket("localhost", 1234);
+
+            ObjectOutputStream out = new ObjectOutputStream(socket.getOutputStream());
+
+            out.writeObject(student);
+            out.writeObject(preferences);
+
+            out.close();
+            socket.close();
+        } catch (IOException e) {
+            // Handle any networking errors here
+            e.printStackTrace();
+        }
+    }
+    public void genetic() {
         if (assignmentFrame != null) {
             assignmentFrame.dispose();  // Close the previous AssignmentFrame
         }
@@ -95,48 +122,7 @@ public class Server {
     public List<Assignment> getAssignments() {
         return this.bestAssignment;
     }
-    public synchronized void removeStudent(Student student) {
-        assignments.removeIf(assignment -> assignment.getStudent().equals(student));
-        for (Destination destination : destinations) {
-            if (destination.removeStudent(student)) {
-//                broadcastMessage("remove student " + student.getName() + " " + student.getSurname() + " " + destination.getName());
-                break;
-            }
-        }
-    }
 
-    public synchronized void removeAssignment(Assignment assignment) {
-        assignments.remove(assignment);
-        assignment.getDestination().removeStudent(assignment.getStudent());
-//        broadcastMessage("remove assignment " + assignment.getStudent().getName() + " " + assignment.getStudent().getSurname() + " " + assignment.getDestination().getName());
-    }
-
-//    public synchronized void addDestination(Destination destination) {
-//        destinations.add(destination);
-//    }
-
-//    public synchronized int getMaxStudentCount(Destination destination) {
-//        int count = 0;
-//        for (Assignment assignment : assignments) {
-//            if (assignment.getDestination().equals(destination)) {
-//                count++;
-//            }
-//        }
-//        return count;
-//    }
-
-    public synchronized int getAssignmentCost(Student student, Destination destination) {
-        int cost = 0;
-//        for (Destination pref : student.getPreferences()) {
-//            if (pref.equals(destination)) {
-//                cost = student.getPreferences().indexOf(pref) + 1;
-//                break;
-//            }
-//        }
-        return cost;
-    }
-
-    public synchronized List<Destination> getDestinations() { return destinations; }
 
     public static void main(String[] args) {
         Server server = new Server(1234);
